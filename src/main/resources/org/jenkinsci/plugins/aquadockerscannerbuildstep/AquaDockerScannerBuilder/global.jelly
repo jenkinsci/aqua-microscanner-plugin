@@ -1,0 +1,16 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <!--
+    This Jelly script is used to produce the global configuration option.
+  -->
+  <f:section title="Aqua MicroScanner">
+    <f:entry title="Aqua MicroScanner token" field="microScannerToken" help="/plugin/aqua-security-micro-scanner/help-token.html">
+      <f:password />
+    </f:entry>
+    <f:radioBlock checked="${instance.isCaCertificates('ignore') or true}" name="caCertificates" field="caCertificates" value="ignore" title="Fail scans if ca-certificate is missing." inline="true">
+    </f:radioBlock>
+    <f:radioBlock checked="${instance.isCaCertificates('fail')}" name="caCertificates" field="caCertificates" value="fail" title="Pass scans if ca-certificate is missing." inline="true">
+    </f:radioBlock>
+
+  </f:section>
+</j:jelly>
