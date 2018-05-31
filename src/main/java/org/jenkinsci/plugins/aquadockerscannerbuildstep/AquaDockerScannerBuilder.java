@@ -39,7 +39,7 @@ public class AquaDockerScannerBuilder extends Builder implements SimpleBuildStep
 	private final String imageName;
 	private final String onDisallowed;
 	private final String notCompliesCmd;
-	private final String caCertificates;
+	private final boolean caCertificates;
 
 	private static int count;
 	private static int buildId = 0;
@@ -55,7 +55,7 @@ public class AquaDockerScannerBuilder extends Builder implements SimpleBuildStep
 	// Fields in config.jelly must match the parameter names in the
 	// "DataBoundConstructor"
 	@DataBoundConstructor
-	public AquaDockerScannerBuilder(String imageName, String onDisallowed, String notCompliesCmd, String caCertificates) {
+	public AquaDockerScannerBuilder(String imageName, String onDisallowed, String notCompliesCmd, boolean caCertificates) {
 		this.imageName = imageName;
 		this.onDisallowed = onDisallowed;
 		this.notCompliesCmd = notCompliesCmd;
@@ -67,7 +67,7 @@ public class AquaDockerScannerBuilder extends Builder implements SimpleBuildStep
 	 * configuration screen.
 	 */
 
-	public String getCaCertificates() {
+	public boolean getCaCertificates() {
  		return caCertificates;
  	}
 
@@ -99,7 +99,7 @@ public class AquaDockerScannerBuilder extends Builder implements SimpleBuildStep
 		// This is where you 'build' the project.
 
 		String microScannerToken = getDescriptor().getMicroScannerToken();
-		String caCertificates = getDescriptor().getCaCertificates();
+		boolean caCertificates = getDescriptor().getCaCertificates();
 
 		if (microScannerToken == null || microScannerToken.trim().equals("")) {
 				throw new AbortException("Missing configuration. Please set the global configuration parameters in The \"Aqua Security\" section under  \"Manage Jenkins/Configure System\", before continuing.\n");
@@ -120,7 +120,7 @@ public class AquaDockerScannerBuilder extends Builder implements SimpleBuildStep
 			artifactName = "scanout-" + artifactSuffix + ".html";
 		}
 
-		int exitCode = ScannerExecuter.execute(build, workspace, launcher, listener, artifactName, microScannerToken, imageName, notCompliesCmd, onDisallowed == null || !onDisallowed.equals("fail"), caCertificates == null || !caCertificates.equals("fail"));
+		int exitCode = ScannerExecuter.execute(build, workspace, launcher, listener, artifactName, microScannerToken, imageName, notCompliesCmd, onDisallowed == null || !onDisallowed.equals("fail"),caCertificates);
 		build.addAction(new AquaScannerAction(build, artifactSuffix, artifactName));
 
 		archiveArtifacts(build, workspace, launcher, listener);
@@ -168,7 +168,7 @@ public class AquaDockerScannerBuilder extends Builder implements SimpleBuildStep
 		 * call save().
 		 */
 		private String microScannerToken;
-		private String caCertificates;
+		private boolean caCertificates;
 
 		/**
 		 * In order to load the persisted global configuration, you have to call load()
@@ -211,24 +211,18 @@ public class AquaDockerScannerBuilder extends Builder implements SimpleBuildStep
 			// To persist global configuration information,
 			// set that to properties and call save().
 			microScannerToken = formData.getString("microScannerToken");
-			caCertificates = formData.getString("caCertificates");
+			caCertificates = formData.getBoolean("caCertificates");
 			save();
 			return super.configure(req, formData);
 		}
+
 		public String getMicroScannerToken() {
 			return microScannerToken;
 		}
-		public String getCaCertificates() {
+		public boolean getCaCertificates() {
 			return caCertificates;
 		}
 
-		public String isCaCertificates(String state) {
-			if (getCaCertificates() == null) {
-				// default for new step GUI
-				return "ignore".equals(state) ? "true" : "false";
-			} else {
-				return this.caCertificates.equals(state) ? "true" : "false";
-			}
-		}
+
 	}
 }

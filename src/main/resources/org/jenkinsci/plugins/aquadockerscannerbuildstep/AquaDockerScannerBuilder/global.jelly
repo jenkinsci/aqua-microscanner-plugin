@@ -7,10 +7,8 @@
     <f:entry title="Aqua MicroScanner token" field="microScannerToken" help="/plugin/aqua-security-micro-scanner/help-token.html">
       <f:password />
     </f:entry>
-    <f:radioBlock checked="${instance.isCaCertificates('ignore') or true}" name="caCertificates" field="caCertificates" value="ignore" title="Fail scans if ca-certificate is missing." inline="true">
-    </f:radioBlock>
-    <f:radioBlock checked="${instance.isCaCertificates('fail')}" name="caCertificates" field="caCertificates" value="fail" title="Pass scans if ca-certificate is missing." inline="true">
-    </f:radioBlock>
-
+    <f:entry title="Fail scans if ca-certificate is missing.">
+      <f:checkbox name="caCertificates" field="caCertificates"/>
+    </f:entry>
   </f:section>
 </j:jelly>
