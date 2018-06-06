@@ -39,7 +39,6 @@ public class AquaDockerScannerBuilder extends Builder implements SimpleBuildStep
 	private final String imageName;
 	private final String onDisallowed;
 	private final String notCompliesCmd;
-	private final boolean caCertificates;
 
 	private static int count;
 	private static int buildId = 0;
@@ -55,11 +54,10 @@ public class AquaDockerScannerBuilder extends Builder implements SimpleBuildStep
 	// Fields in config.jelly must match the parameter names in the
 	// "DataBoundConstructor"
 	@DataBoundConstructor
-	public AquaDockerScannerBuilder(String imageName, String onDisallowed, String notCompliesCmd, boolean caCertificates) {
+	public AquaDockerScannerBuilder(String imageName, String onDisallowed, String notCompliesCmd) {
 		this.imageName = imageName;
 		this.onDisallowed = onDisallowed;
 		this.notCompliesCmd = notCompliesCmd;
-		this.caCertificates = caCertificates;
 	}
 
 	/**
@@ -67,9 +65,6 @@ public class AquaDockerScannerBuilder extends Builder implements SimpleBuildStep
 	 * configuration screen.
 	 */
 
-	public boolean getCaCertificates() {
- 		return caCertificates;
- 	}
 
 	public String getImageName() {
 		return imageName;

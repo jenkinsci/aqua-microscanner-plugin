@@ -1,21 +1,20 @@
-# Aqua Security Microscanner Jenkins Plugin #
-
-This is a Jenkins plugin for calling the Aqua Microscanner to scan a Docker image
+# Aqua MicroScanner Jenkins Plugin #
+Enables scanning of docker build for OS package vulnerabilities.
 
 ## Prerequisites for the plugin to be operational ##
 
-1. Docker must be installed on the same machine Jenkins is installed in because the scanner itself is deployed via a Docker container.
+1. Docker must be installed on the same machine Jenkins is installed.
 2. The *jenkins* user must be added to the *docker* group so it has permission to run Docker:
 
      ```
      sudo usermod -aG docker jenkins
      ```
-     
+
 
 ## Usage of plugin in Jenkins ##
-* In the global configuration page ("Manage Jenkins"/"Configure System") in the section for this plugin, enter values for the Aqua API url, the user name, the password and a timeout value in seconds. The build step will fail if scanning does not terminate within the timeout value. A value of 0 will cause the default timeout value, 300 seconds, to be used.
-* In the configuration page for your project, add an "Aqua Security" step from the "Add build step" dropdown list. Choose between a local image or a hosted image. Enter the image path (including the tag) of the image that is to be scanned, and in the case of a hosted image, also enter the registry name. These values can be entered with $VARIABLE syntax on environment variables.
-* When run successfully, an artifact named "scanout.html" will be created in the project's workspace. If more than one "Aqua Security" step is added to a build, the additional artifact will be suffixed with consecutive numbers.
+* In the global configuration page ("Manage Jenkins"/"Configure System") in the section for this plugin, enter value for the Aqua MicroScanner token.
+* In the configuration page for your project, add an "Aqua MicroScanner" step from the "Add build step" dropdown list. Enter the image name (including the tag) of the image that is to be scanned. These values can be entered with $VARIABLE syntax on environment variables.
+* When run successfully, an artifact named "scanout.html" will be created in the project's workspace. If more than one "Aqua MicroScanner" step is added to a build, the additional artifact will be suffixed with consecutive numbers.
 
 ## Building the plugin (instructions for Ubuntu)##
 
