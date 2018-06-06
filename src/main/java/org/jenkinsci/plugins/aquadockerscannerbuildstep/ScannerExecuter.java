@@ -143,7 +143,7 @@ public class ScannerExecuter {
 	private static boolean cleanMicroScannerImage(String uniqueIdStr) {
 		try
 		{
-			Process p = Runtime.getRuntime().exec(new String[]{"bash","-c","docker rmi aqua-ms-"+ uniqueIdStr});
+			Runtime.getRuntime().exec(new String[]{"bash","-c","docker rmi aqua-ms-"+ uniqueIdStr});
 		}
 		catch (IOException e)
 		{
