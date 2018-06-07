@@ -7,14 +7,18 @@ import hudson.FilePath;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.util.ArgumentListBuilder;
-import java.io.FileWriter;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.charset.StandardCharsets;
+import java.io.PrintWriter;
+import java.io.Writer;
+import java.io.OutputStreamWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.FileNotFoundException;
 import java.util.UUID;
-
 import hudson.FilePath;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -39,21 +43,23 @@ public class ScannerExecuter {
 			//
 			try
 			{
-				FileWriter f = new FileWriter(new File(microscannerDockerfilePath));
-				f.write("FROM " + imageName + "\n");
-				f.write("ADD https://get.aquasec.com/jp/microscanner .\n");
-				f.write("RUN chmod +x microscanner\n");
-				f.write("ARG token\n");
-				f.write("RUN ./microscanner ${token} --html ");
+				File file = new File(microscannerDockerfilePath);
+				Writer w = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
+				PrintWriter pw = new PrintWriter(w);
+				pw.println("FROM " + imageName);
+				pw.println("ADD https://get.aquasec.com/microscanner .");
+				pw.println("RUN chmod +x microscanner");
+				pw.println("ARG token");
+				pw.append("RUN ./microscanner ${token} --html ");
 				if (checkonly)
 				{
-					f.write("--continue-on-failure ");
+					pw.append("--continue-on-failure ");
 				}
 				if (!caCertificates)
 				{
-					f.write("--no-verify");
+					pw.append("--no-verify");
 				}
-				f.close();
+				pw.close();
 			}
 			catch (IOException e)
 			{
@@ -133,14 +139,27 @@ public class ScannerExecuter {
 		}
 	}
 	//Delete microscanner Dockerfile.
-	private static boolean cleanMicroScannerDockerFile(String microscannerDockerfilePath) {
-		File file = new File(microscannerDockerfilePath);
-		file.delete();
-
-		return true;
+	private static void cleanMicroScannerDockerFile(String microscannerDockerfilePath) {
+		try
+		{
+			File file = new File(microscannerDockerfilePath);
+			if(file.delete())
+			{
+				return;
+			}
+			else
+			{
+				return;
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return;
 	}
 	//Clean microscanner unique build image.
-	private static boolean cleanMicroScannerImage(String uniqueIdStr) {
+	private static void cleanMicroScannerImage(String uniqueIdStr) {
 		try
 		{
 			Runtime.getRuntime().exec(new String[]{"bash","-c","docker rmi aqua-ms-"+ uniqueIdStr});
@@ -149,20 +168,21 @@ public class ScannerExecuter {
 		{
 			e.printStackTrace();
 		}
-
-		return true;
+		return;
+		//return true;
 	}
 	//Read dockerbuild output and saving only html output.
 	private static boolean cleanBuildOutput(Run<?, ?> build, String outFileName) {
 		String output = readOutput(build, outFileName);
-
 		int htmlStart = output.indexOf("<!DOCTYPE html>");
 		int htmlEnd = output.lastIndexOf("</html>") + 7;
 		output = output.substring(htmlStart,htmlEnd);
 		try {
-			FileWriter f = new FileWriter(new File(build.getRootDir(), outFileName));
-			f.write(output);
-			f.close();
+			File file = new File(build.getRootDir() + "/" + outFileName);
+			Writer w = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
+			PrintWriter pw = new PrintWriter(w);
+			pw.append(output);
+			pw.close();
 		}
 		catch (IOException e)
 		{
@@ -176,7 +196,7 @@ public class ScannerExecuter {
 		String output = "";
 		try
 		{
-			output = new String ( Files.readAllBytes( Paths.get(build.getRootDir().toString() + "/" + outFileName) ) );
+			output = new String ( Files.readAllBytes( Paths.get(build.getRootDir().toString() + "/" + outFileName) ), StandardCharsets.UTF_8);
 		}
 		catch (IOException e)
 		{
