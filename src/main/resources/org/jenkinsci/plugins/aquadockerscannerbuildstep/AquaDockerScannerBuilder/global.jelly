@@ -4,7 +4,7 @@
     This Jelly script is used to produce the global configuration option.
   -->
   <f:section title="Aqua MicroScanner">
-    <f:entry title="Aqua MicroScanner token" field="microScannerToken" help="/plugin/aqua-security-micro-scanner/help-token.html">
+    <f:entry title="Aqua MicroScanner token" field="microScannerToken" help="/plugin/aqua-microscanner/help-token.html">
       <f:password />
     </f:entry>
     <f:entry title="Fail scans if ca-certificate is missing.">
