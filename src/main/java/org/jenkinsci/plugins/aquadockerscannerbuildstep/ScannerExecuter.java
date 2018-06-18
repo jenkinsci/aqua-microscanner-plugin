@@ -42,6 +42,22 @@ public class ScannerExecuter {
 			StringBuilder microScannerDockerfileContent = new StringBuilder();
 
 			microScannerDockerfileContent.append("FROM " + imageName + "\n");
+			microScannerDockerfileContent.append("USER root" + "\n");
+			microScannerDockerfileContent.append("WORKDIR /" + "\n");
+      microScannerDockerfileContent.append("RUN if [ ! -d /etc/ssl/certs/ ]; then \\" + "\n");
+      microScannerDockerfileContent.append("  PACKAGE_MANAGER=$(basename $(command which apk apt yum false 2>/dev/null | head -n1)); \\" + "\n");
+      microScannerDockerfileContent.append("  if [ ${PACKAGE_MANAGER} = apk ]; then \\" + "\n");
+      microScannerDockerfileContent.append("    COMMAND='apk --no-cache add'; \\" + "\n");
+      microScannerDockerfileContent.append("  elif [ ${PACKAGE_MANAGER} = apt ]; then \\" + "\n");
+      microScannerDockerfileContent.append("    COMMAND='apt update && apt install --no-install-recommends -y'; \\" + "\n");
+      microScannerDockerfileContent.append("  elif [ ${PACKAGE_MANAGER} = yum ]; then \\" + "\n");
+      microScannerDockerfileContent.append("    COMMAND='yum install -y'; \\" + "\n");
+      microScannerDockerfileContent.append("  else \\" + "\n");
+      microScannerDockerfileContent.append("    echo '/etc/ssl/certs/ not found and package manager not apk, apt, or yum. Aborting' >&2; \\" + "\n");
+      microScannerDockerfileContent.append("    exit 1; \\" + "\n");
+      microScannerDockerfileContent.append("  fi; \\" + "\n");
+      microScannerDockerfileContent.append("  eval ${COMMAND} ca-certificates; \\" + "\n");
+      microScannerDockerfileContent.append("fi" + "\n");
 			microScannerDockerfileContent.append("ADD https://get.aquasec.com/microscanner .\n");
 			microScannerDockerfileContent.append("RUN chmod +x microscanner\n");
 			microScannerDockerfileContent.append("ARG token\n");
