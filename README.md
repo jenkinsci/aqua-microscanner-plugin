@@ -3,7 +3,7 @@ Enables scanning of docker builds in Jenkins for OS package vulnerabilities.
 
 ## Prerequisites for the plugin to be operational ##
 
-1. Docker must be installed on the same machine Jenkins is installed.
+1. Docker must be installed on the same machine Jenkins is installed. If your job is configured to use a node other than Master node, then Docker is required only on the build Jenkins node (slave). 
 2. The *jenkins* user must be added to the *docker* group so it has permission to run Docker:
 
      ```
