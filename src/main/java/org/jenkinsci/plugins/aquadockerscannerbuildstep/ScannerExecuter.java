@@ -43,7 +43,7 @@ public class ScannerExecuter {
 
 			microScannerDockerfileContent.append("FROM " + imageName + "\n");
 			microScannerDockerfileContent.append("ADD https://get.aquasec.com/microscanner .\n");
-			microScannerDockerfileContent.append("USER root\n");
+			microScannerDockerfileContent.append("USER 0\n");
 			microScannerDockerfileContent.append("RUN chmod +x microscanner\n");
 			microScannerDockerfileContent.append("ARG token\n");
 			microScannerDockerfileContent.append("RUN ./microscanner ${token} --html ");
@@ -101,7 +101,7 @@ public class ScannerExecuter {
 			{
 				listener.getLogger().println(scanOutput);
 			}
-			cleanBuildOutput(scanOutput, target, listener);
+			cleanBuildOutput(scanOutput, target, listener, imageName);
 
 			// Possibly run a shell command on non compliance
 			if (exitCode == AquaDockerScannerBuilder.DISALLOWED_CODE && !notCompliesCmd.trim().isEmpty()) {
@@ -137,10 +137,13 @@ public class ScannerExecuter {
 	}
 
 	//Read dockerbuild output and saving only html output.
-	private static boolean cleanBuildOutput(String scanOutput, FilePath target, TaskListener listener) {
+	private static boolean cleanBuildOutput(String scanOutput, FilePath target, TaskListener listener, String title) {
 		int htmlStart = scanOutput.indexOf("<!DOCTYPE html>");
 		int htmlEnd = scanOutput.lastIndexOf("</html>") + 7;
-		scanOutput = scanOutput.substring(htmlStart,htmlEnd);
+		if (htmlStart > -1) {
+			scanOutput = scanOutput.substring(htmlStart, htmlEnd);
+			scanOutput = scanOutput.replace("<h1>Scan Report: </h1>", "<h1>Scan Report: " + title + "</h1>");
+		}
 		try
 		{
 			target.write(scanOutput, "UTF-8");

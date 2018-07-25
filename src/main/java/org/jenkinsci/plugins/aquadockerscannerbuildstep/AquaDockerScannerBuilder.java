@@ -116,7 +116,7 @@ public class AquaDockerScannerBuilder extends Builder implements SimpleBuildStep
 		}
 
 		int exitCode = ScannerExecuter.execute(build, workspace, launcher, listener, artifactName, microScannerToken, imageName, notCompliesCmd, onDisallowed == null || !onDisallowed.equals("fail"),caCertificates);
-		build.addAction(new AquaScannerAction(build, artifactSuffix, artifactName));
+		build.addAction(new AquaScannerAction(build, artifactSuffix, artifactName, imageName));
 
 		archiveArtifacts(build, workspace, launcher, listener);
 

@@ -8,11 +8,13 @@ public class AquaScannerAction implements Action {
     private String resultsUrl;
     private Run<?, ?> build;
     private String artifactSuffix;
+    private String title;
 
-    public AquaScannerAction(Run<?, ?> build, String artifactSuffix, String artifactName) {
+    public AquaScannerAction(Run<?, ?> build, String artifactSuffix, String artifactName, String title) {
         this.build = build;
         this.artifactSuffix = artifactSuffix;
         this.resultsUrl = "../artifact/" + artifactName;
+        this.title = title;
     }
 
     @Override
@@ -24,6 +26,9 @@ public class AquaScannerAction implements Action {
     @Override
     public String getDisplayName() {
         // return the label for your link
+    if (title != null) {
+        return title;
+    }
 	if (artifactSuffix == null) {
 	    return "Aqua MicroScanner";
 	} else {
