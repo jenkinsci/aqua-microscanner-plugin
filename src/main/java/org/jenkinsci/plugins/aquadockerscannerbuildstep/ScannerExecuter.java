@@ -31,7 +31,7 @@ import hudson.model.TaskListener;
 public class ScannerExecuter {
 
 	public static int execute(Run<?, ?> build, FilePath workspace, Launcher launcher, TaskListener listener, String artifactName,
-			String microScannerToken, String imageName, String notCompliesCmd, boolean checkonly, boolean caCertificates){
+			String microScannerToken, String imageName, String notCompliesCmd, String outputFormat, boolean checkonly, boolean caCertificates){
 
 		PrintStream print_stream = null;
 		try {
@@ -46,7 +46,7 @@ public class ScannerExecuter {
 			microScannerDockerfileContent.append("USER 0\n");
 			microScannerDockerfileContent.append("RUN chmod +x microscanner\n");
 			microScannerDockerfileContent.append("ARG token\n");
-			microScannerDockerfileContent.append("RUN ./microscanner ${token} --html ");
+			microScannerDockerfileContent.append("RUN ./microscanner ${token} ").append("json".equalsIgnoreCase(outputFormat) ? "" : "--html ");
 			if (checkonly)
 			{
 				microScannerDockerfileContent.append("--continue-on-failure ");
@@ -136,13 +136,19 @@ public class ScannerExecuter {
 		}
 	}
 
-	//Read dockerbuild output and saving only html output.
+	//Read dockerbuild output and saving only html/json output.
 	private static boolean cleanBuildOutput(String scanOutput, FilePath target, TaskListener listener, String title) {
 		int htmlStart = scanOutput.indexOf("<!DOCTYPE html>");
 		int htmlEnd = scanOutput.lastIndexOf("</html>") + 7;
 		if (htmlStart > -1) {
 			scanOutput = scanOutput.substring(htmlStart, htmlEnd);
 			scanOutput = scanOutput.replace("<h1>Scan Report: </h1>", "<h1>Scan Report: " + title + "</h1>");
+		} else {
+			int jsonStart = scanOutput.indexOf("\"scan_started\"");
+			int jsonEnd = scanOutput.lastIndexOf("}");
+			if (jsonStart > -1) {
+				scanOutput = "{\n" +scanOutput.substring(jsonStart, jsonEnd);
+			}
 		}
 		try
 		{
