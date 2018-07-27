@@ -147,7 +147,7 @@ public class ScannerExecuter {
 			int jsonStart = scanOutput.indexOf("\"scan_started\"");
 			int jsonEnd = scanOutput.lastIndexOf("}");
 			if (jsonStart > -1) {
-				scanOutput = "{\n" +scanOutput.substring(jsonStart, jsonEnd);
+				scanOutput = "{\n  " +scanOutput.substring(jsonStart, jsonEnd);
 			}
 		}
 		try
