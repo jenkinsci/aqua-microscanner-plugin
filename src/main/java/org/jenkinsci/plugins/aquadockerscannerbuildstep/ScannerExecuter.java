@@ -94,6 +94,7 @@ public class ScannerExecuter {
 			// Copy local file to workspace FilePath object (which might be on remote
 			// machine)
 			FilePath target = new FilePath(workspace, artifactName);
+			FilePath latestTarget = new FilePath(workspace, "scanlatest." + outputFormat );
 			FilePath outFilePath = new FilePath(outFile);
 			outFilePath.copyTo(target);
 			String scanOutput = target.readToString();
@@ -101,7 +102,7 @@ public class ScannerExecuter {
 			{
 				listener.getLogger().println(scanOutput);
 			}
-			cleanBuildOutput(scanOutput, target, listener, imageName);
+			cleanBuildOutput(scanOutput, target, latestTarget, listener, imageName);
 
 			// Possibly run a shell command on non compliance
 			if (exitCode == AquaDockerScannerBuilder.DISALLOWED_CODE && !notCompliesCmd.trim().isEmpty()) {
@@ -137,7 +138,7 @@ public class ScannerExecuter {
 	}
 
 	//Read dockerbuild output and saving only html/json output.
-	private static boolean cleanBuildOutput(String scanOutput, FilePath target, TaskListener listener, String title) {
+	private static boolean cleanBuildOutput(String scanOutput, FilePath target, FilePath latestTarget, TaskListener listener, String title) {
 		int htmlStart = scanOutput.indexOf("<!DOCTYPE html>");
 		int htmlEnd = scanOutput.lastIndexOf("</html>") + 7;
 		if (htmlStart > -1) {
@@ -145,13 +146,15 @@ public class ScannerExecuter {
 			scanOutput = scanOutput.replace("<h1>Scan Report: </h1>", "<h1>Scan Report: " + title + "</h1>");
 		} else {
 			int jsonStart = scanOutput.indexOf("\"scan_started\"");
-			int jsonEnd = scanOutput.lastIndexOf("}");
+			int jsonEnd = scanOutput.lastIndexOf("}") + 1;
 			if (jsonStart > -1) {
 				scanOutput = "{\n  " +scanOutput.substring(jsonStart, jsonEnd);
 			}
 		}
 		try
 		{
+			//The latest target will be overwritten with each run, but can be used from pipelines to validate latest run
+			latestTarget.write(scanOutput, "UTF-8");
 			target.write(scanOutput, "UTF-8");
 		}
 		catch (Exception e)
