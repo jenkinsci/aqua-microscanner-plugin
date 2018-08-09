@@ -57,7 +57,11 @@ public class AquaDockerScannerBuilder extends Builder implements SimpleBuildStep
 		this.imageName = imageName;
 		this.onDisallowed = onDisallowed;
 		this.notCompliesCmd = notCompliesCmd;
-		this.outputFormat = outputFormat;
+		if ("json".equalsIgnoreCase(outputFormat)) {
+			this.outputFormat = outputFormat;
+		} else {
+			this.outputFormat = "html";
+		}
 	}
 
 	/**
@@ -120,7 +124,7 @@ public class AquaDockerScannerBuilder extends Builder implements SimpleBuildStep
 			// New build
 			setBuildId(build.hashCode());
 			setCount(1);
-			artifactSuffix = null; // When ther is only one step, there should be no suffix at all
+			artifactSuffix = null; // When there is only one step, there should be no suffix at all
 			artifactName = "scanout." + outputFormat;
 		} else {
 			setCount(count + 1);

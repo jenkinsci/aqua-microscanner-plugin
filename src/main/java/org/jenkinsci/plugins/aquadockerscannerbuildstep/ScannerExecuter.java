@@ -94,7 +94,7 @@ public class ScannerExecuter {
 			// Copy local file to workspace FilePath object (which might be on remote
 			// machine)
 			FilePath target = new FilePath(workspace, artifactName);
-			FilePath latestTarget = new FilePath(workspace, "scanlatest." + outputFormat );
+			FilePath latestTarget = new FilePath(workspace, "scanlatest." + ("json".equalsIgnoreCase(outputFormat) ? "json" : "html") );
 			FilePath outFilePath = new FilePath(outFile);
 			outFilePath.copyTo(target);
 			String scanOutput = target.readToString();
