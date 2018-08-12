@@ -18,6 +18,16 @@
    </f:radioBlock>
 
    <f:block>
+     <b>Output format:</b>
+   </f:block>
+
+   <f:radioBlock checked="${instance.isOnOutputFormat('html') or true}" name="outputFormat" value="html" title="Output html report" inline="true">
+   </f:radioBlock>
+   <f:radioBlock checked="${instance.isOnOutputFormat('json')}" name="outputFormat" value="json" title="Output json file" inline="true">
+   </f:radioBlock>
+
+
+   <f:block>
      <b>Image to scan:</b>
    </f:block>
    <f:entry title="Image Name" field="imageName">

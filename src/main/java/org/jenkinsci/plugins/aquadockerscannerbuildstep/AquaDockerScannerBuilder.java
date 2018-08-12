@@ -5,10 +5,8 @@ import hudson.AbortException;
 import hudson.Launcher;
 import hudson.Extension;
 import hudson.util.FormValidation;
-import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.tasks.Builder;
-//import hudson.model.BuildListener;
 import hudson.tasks.ArtifactArchiver;
 import hudson.tasks.BuildStepDescriptor;
 import net.sf.json.JSONObject;
@@ -39,6 +37,7 @@ public class AquaDockerScannerBuilder extends Builder implements SimpleBuildStep
 	private final String imageName;
 	private final String onDisallowed;
 	private final String notCompliesCmd;
+	private final String outputFormat;
 
 	private static int count;
 	private static int buildId = 0;
@@ -54,10 +53,15 @@ public class AquaDockerScannerBuilder extends Builder implements SimpleBuildStep
 	// Fields in config.jelly must match the parameter names in the
 	// "DataBoundConstructor"
 	@DataBoundConstructor
-	public AquaDockerScannerBuilder(String imageName, String onDisallowed, String notCompliesCmd) {
+	public AquaDockerScannerBuilder(String imageName, String onDisallowed, String notCompliesCmd, String outputFormat) {
 		this.imageName = imageName;
 		this.onDisallowed = onDisallowed;
 		this.notCompliesCmd = notCompliesCmd;
+		if ("json".equalsIgnoreCase(outputFormat)) {
+			this.outputFormat = outputFormat;
+		} else {
+			this.outputFormat = "html";
+		}
 	}
 
 	/**
@@ -76,6 +80,9 @@ public class AquaDockerScannerBuilder extends Builder implements SimpleBuildStep
 	public String getNotCompliesCmd() {
 		return notCompliesCmd;
 	}
+	public String getOutputFormat() {
+		return outputFormat;
+	}
 
 
 	// Returns the 'checked' state of the radio button for the step GUI
@@ -85,6 +92,16 @@ public class AquaDockerScannerBuilder extends Builder implements SimpleBuildStep
 			return "ignore".equals(state) ? "true" : "false";
 		} else {
 			return this.onDisallowed.equals(state) ? "true" : "false";
+		}
+	}
+
+	// Returns the 'checked' state of the radio button for the output
+	public String isOnOutputFormat(String state) {
+		if (this.outputFormat == null) {
+			// default for new step GUI
+			return "html".equals(state) ? "true" : "false";
+		} else {
+			return this.outputFormat.equals(state) ? "true" : "false";
 		}
 	}
 
@@ -107,16 +124,16 @@ public class AquaDockerScannerBuilder extends Builder implements SimpleBuildStep
 			// New build
 			setBuildId(build.hashCode());
 			setCount(1);
-			artifactSuffix = null; // When ther is only one step, there should be no suffix at all
-			artifactName = "scanout.html";
+			artifactSuffix = null; // When there is only one step, there should be no suffix at all
+			artifactName = "scanout." + outputFormat;
 		} else {
 			setCount(count + 1);
 			artifactSuffix = Integer.toString(count);
-			artifactName = "scanout-" + artifactSuffix + ".html";
+			artifactName = "scanout-" + artifactSuffix + "." + outputFormat;
 		}
 
-		int exitCode = ScannerExecuter.execute(build, workspace, launcher, listener, artifactName, microScannerToken, imageName, notCompliesCmd, onDisallowed == null || !onDisallowed.equals("fail"),caCertificates);
-		build.addAction(new AquaScannerAction(build, artifactSuffix, artifactName));
+		int exitCode = ScannerExecuter.execute(build, workspace, launcher, listener, artifactName, microScannerToken, imageName, notCompliesCmd, outputFormat == null ? "html" : outputFormat, onDisallowed == null || !onDisallowed.equals("fail"),caCertificates);
+		build.addAction(new AquaScannerAction(build, artifactSuffix, artifactName, imageName));
 
 		archiveArtifacts(build, workspace, launcher, listener);
 
