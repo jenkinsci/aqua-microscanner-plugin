@@ -104,6 +104,12 @@ public class ScannerExecuter {
 			}
 			cleanBuildOutput(scanOutput, target, latestTarget, listener, imageName);
 
+			//Copy css from jenkins home
+			FilePath targetCss = new FilePath(workspace, "styles.css");
+			File cssFile = new File(env.get("JENKINS_HOME") + "/plugins/aqua-microscanner/css/", "styles.css");
+			FilePath cssFilePath = new FilePath(cssFile);
+			cssFilePath.copyTo(targetCss);
+
 			// Possibly run a shell command on non compliance
 			if (exitCode == AquaDockerScannerBuilder.DISALLOWED_CODE && !notCompliesCmd.trim().isEmpty()) {
 				ps = launcher.launch();
