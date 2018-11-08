@@ -157,6 +157,8 @@ public class AquaDockerScannerBuilder extends Builder implements SimpleBuildStep
 			throws java.lang.InterruptedException {
 		ArtifactArchiver artifactArchiver = new ArtifactArchiver("scanout*");
 		artifactArchiver.perform(build, workspace, launcher, listener);
+		ArtifactArchiver styleArtifactArchiver = new ArtifactArchiver("styles.css");
+		styleArtifactArchiver.perform(build, workspace, launcher, listener);
 	}
 
 	// Overridden for better type safety.

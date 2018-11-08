@@ -21,28 +21,7 @@ Enables scanning of docker builds in Jenkins for OS package vulnerabilities.
 
 ![](images/Jenkins-configure-plugin.png)
 
-## Configure HTML in Jenkins
 
-In order to view Aqua scan results in Jenkins, HTML support must be configured. Follow these steps to set this up.
-
-1. In Jenkins, select **Manage Jenkins**, and then open **Script Console**.
-2. Verify the current settings:
-*System.getProperty("hudson.model.DirectoryBrowserSupport.CSP");*
-3. Clear the current settings:
-*System.clearProperty("hudson.model.DirectoryBrowserSupport.CSP");*
-4. Add settings to allow running scripts and styles from other files served by Jenkins:
-```
-*System.setProperty("hudson.model.DirectoryBrowserSupport.CSP", "sandbox allow-scripts; default-src 'self'; script-src 'self' 'unsafe-inline'; img-src 'self'; style-src * 'unsafe-inline'; font-src *");*
-```
-5. This setting will be effective until the next Jenkins reboot. You can add it permanently in any of the following ways:
-
-   a. Create a job that runs this setting every time Jenkins reboots
-   ```  
-      java -Dhudson.model.DirectoryBrowserSupport.CSP="sandbox allow-scripts; default-src 'self'; script-src 'self' 'unsafe-inline'; img-src 'self'; style-src * 'unsafe-inline'; font-src *;" -jar jenkins.war
-   ```
-   b. Add the following to the JENKINS_JAVA_OPTIONS file (CentOS: /etc/sysconfig/Jenkins, Ubuntu: /etc/default/Jenkins)
-   ```
-      JENKINS_JAVA_OPTIONS="-Djava.awt.headless=true -Dhudson.model.DirectoryBrowserSupport.CSP=\"sandbox allow-scripts; default-src 'self'; script-src 'self' 'unsafe-inline'; img-src 'self'; style-src * 'unsafe-inline'; font-src *;\""```
 ## Use the plugin
 You can use the MicroScanner plugin in the build process in Freestyle and Pipelines jobs. You can configure the job to scan the image during the build process.
 
@@ -89,18 +68,6 @@ You can also see results of the scan as an HTML page. An artifact named "scanout
 ```
 
 * Install Maven3 (must be 3)
-  *   On Ubuntu 14.04
-      ```
-      sudo add-apt-repository ppa:natecarlson/maven3
-      sudo apt-get update
-      sudo apt-get install maven3
-      sudo ln -s /usr/bin/mvn3 /usr/bin/mvn
-	  ```
-  *   On Ubuntu 15.10
-      ```
-      sudo apt-get update
-      sudo apt-get install maven
-      ```
 
 *  Build
 
