@@ -20,6 +20,7 @@ import java.io.IOException;
 import hudson.FilePath;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import hudson.console.ModelHyperlinkNote;
 import jenkins.tasks.SimpleBuildStep;
 import org.jenkinsci.Symbol;
 
@@ -138,12 +139,14 @@ public class AquaDockerScannerBuilder extends Builder implements SimpleBuildStep
 		archiveArtifacts(build, workspace, launcher, listener);
 
 		System.out.println("exitCode: " + exitCode);
+    String disallowedMessage = "Image is non-compliant. See report: ";
 		String failedMessage = "Scanning failed.";
 		switch (exitCode) {
 		case OK_CODE:
 				System.out.println("Scanning success.");
 				break;
 		case DISALLOWED_CODE:
+        listener.getLogger().println(disallowedMessage + ModelHyperlinkNote.encodeTo(System.getenv("BUILD_URL")+"/artifact/"+artifactName,artifactName));
 				throw new AbortException(failedMessage);
 		default:
 			// This exception causes the message to appear in the Jenkins console
