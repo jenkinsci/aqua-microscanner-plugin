@@ -1,3 +1,8 @@
 .idea/
+.classpath
+.factorypath
+.project
+.settings/
+target/
 Dockerfile
 aqua-microscanner.hpi

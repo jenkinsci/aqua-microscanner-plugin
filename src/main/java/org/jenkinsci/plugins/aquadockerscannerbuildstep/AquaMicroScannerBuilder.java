@@ -30,7 +30,7 @@ import org.jenkinsci.Symbol;
  *
  * @author Oran Moshai
  */
-public class AquaDockerScannerBuilder extends Builder implements SimpleBuildStep{
+public class AquaMicroScannerBuilder extends Builder implements SimpleBuildStep{
 
 	public static final int OK_CODE = 0;
 	public static final int DISALLOWED_CODE = 4;
@@ -43,17 +43,17 @@ public class AquaDockerScannerBuilder extends Builder implements SimpleBuildStep
 	private static int buildId = 0;
 
 	public synchronized static void setCount(int count) {
-		AquaDockerScannerBuilder.count = count;
+		AquaMicroScannerBuilder.count = count;
 	}
 
 	public synchronized static void setBuildId(int buildId) {
-		AquaDockerScannerBuilder.buildId = buildId;
+		AquaMicroScannerBuilder.buildId = buildId;
 	}
 
 	// Fields in config.jelly must match the parameter names in the
 	// "DataBoundConstructor"
 	@DataBoundConstructor
-	public AquaDockerScannerBuilder(String imageName, String onDisallowed, String notCompliesCmd, String outputFormat) {
+	public AquaMicroScannerBuilder(String imageName, String onDisallowed, String notCompliesCmd, String outputFormat) {
 		this.imageName = imageName;
 		this.onDisallowed = onDisallowed;
 		this.notCompliesCmd = notCompliesCmd;
@@ -170,7 +170,7 @@ public class AquaDockerScannerBuilder extends Builder implements SimpleBuildStep
 	}
 
 	/**
-	 * Descriptor for {@link AquaDockerScannerBuilder}. Used as a singleton. The
+	 * Descriptor for {@link AquaMicroScannerBuilder}. Used as a singleton. The
 	 * class is marked as public so that it can be accessed from views.
 	 */
 	@Symbol("aquaMicroscanner")

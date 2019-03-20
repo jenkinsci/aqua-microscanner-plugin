@@ -111,7 +111,7 @@ public class ScannerExecuter {
 			cssFilePath.copyTo(targetCss);
 
 			// Possibly run a shell command on non compliance
-			if (exitCode == AquaDockerScannerBuilder.DISALLOWED_CODE && !notCompliesCmd.trim().isEmpty()) {
+			if (exitCode == AquaMicroScannerBuilder.DISALLOWED_CODE && !notCompliesCmd.trim().isEmpty()) {
 				ps = launcher.launch();
 				args = new ArgumentListBuilder();
 				args.add("bash", "-c", notCompliesCmd);
