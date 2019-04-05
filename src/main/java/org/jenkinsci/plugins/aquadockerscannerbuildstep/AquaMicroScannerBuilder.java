@@ -22,6 +22,7 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import jenkins.tasks.SimpleBuildStep;
 import org.jenkinsci.Symbol;
+import hudson.util.Secret;
 
 /**
  * This is the builder class.
@@ -181,7 +182,7 @@ public class AquaMicroScannerBuilder extends Builder implements SimpleBuildStep{
 		 * To persist global configuration information, simply store it in a field and
 		 * call save().
 		 */
-		private String microScannerToken;
+		private Secret microScannerToken;
 		private boolean caCertificates;
 
 		/**
@@ -224,14 +225,14 @@ public class AquaMicroScannerBuilder extends Builder implements SimpleBuildStep{
 		public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
 			// To persist global configuration information,
 			// set that to properties and call save().
-			microScannerToken = formData.getString("microScannerToken");
+			microScannerToken = Secret.fromString(formData.getString("microScannerToken"));
 			caCertificates = formData.getBoolean("caCertificates");
 			save();
 			return super.configure(req, formData);
 		}
 
 		public String getMicroScannerToken() {
-			return microScannerToken;
+			return Secret.toString(microScannerToken);
 		}
 		public boolean getCaCertificates() {
 			return caCertificates;
