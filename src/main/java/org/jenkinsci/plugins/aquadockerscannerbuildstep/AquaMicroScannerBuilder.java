@@ -22,6 +22,7 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import jenkins.tasks.SimpleBuildStep;
 import org.jenkinsci.Symbol;
+import hudson.util.Secret;
 
 /**
  * This is the builder class.
@@ -30,7 +31,7 @@ import org.jenkinsci.Symbol;
  *
  * @author Oran Moshai
  */
-public class AquaDockerScannerBuilder extends Builder implements SimpleBuildStep{
+public class AquaMicroScannerBuilder extends Builder implements SimpleBuildStep{
 
 	public static final int OK_CODE = 0;
 	public static final int DISALLOWED_CODE = 4;
@@ -43,17 +44,17 @@ public class AquaDockerScannerBuilder extends Builder implements SimpleBuildStep
 	private static int buildId = 0;
 
 	public synchronized static void setCount(int count) {
-		AquaDockerScannerBuilder.count = count;
+		AquaMicroScannerBuilder.count = count;
 	}
 
 	public synchronized static void setBuildId(int buildId) {
-		AquaDockerScannerBuilder.buildId = buildId;
+		AquaMicroScannerBuilder.buildId = buildId;
 	}
 
 	// Fields in config.jelly must match the parameter names in the
 	// "DataBoundConstructor"
 	@DataBoundConstructor
-	public AquaDockerScannerBuilder(String imageName, String onDisallowed, String notCompliesCmd, String outputFormat) {
+	public AquaMicroScannerBuilder(String imageName, String onDisallowed, String notCompliesCmd, String outputFormat) {
 		this.imageName = imageName;
 		this.onDisallowed = onDisallowed;
 		this.notCompliesCmd = notCompliesCmd;
@@ -170,7 +171,7 @@ public class AquaDockerScannerBuilder extends Builder implements SimpleBuildStep
 	}
 
 	/**
-	 * Descriptor for {@link AquaDockerScannerBuilder}. Used as a singleton. The
+	 * Descriptor for {@link AquaMicroScannerBuilder}. Used as a singleton. The
 	 * class is marked as public so that it can be accessed from views.
 	 */
 	@Symbol("aquaMicroscanner")
@@ -181,7 +182,7 @@ public class AquaDockerScannerBuilder extends Builder implements SimpleBuildStep
 		 * To persist global configuration information, simply store it in a field and
 		 * call save().
 		 */
-		private String microScannerToken;
+		private Secret microScannerToken;
 		private boolean caCertificates;
 
 		/**
@@ -224,14 +225,14 @@ public class AquaDockerScannerBuilder extends Builder implements SimpleBuildStep
 		public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
 			// To persist global configuration information,
 			// set that to properties and call save().
-			microScannerToken = formData.getString("microScannerToken");
+			microScannerToken = Secret.fromString(formData.getString("microScannerToken"));
 			caCertificates = formData.getBoolean("caCertificates");
 			save();
 			return super.configure(req, formData);
 		}
 
 		public String getMicroScannerToken() {
-			return microScannerToken;
+			return Secret.toString(microScannerToken);
 		}
 		public boolean getCaCertificates() {
 			return caCertificates;
