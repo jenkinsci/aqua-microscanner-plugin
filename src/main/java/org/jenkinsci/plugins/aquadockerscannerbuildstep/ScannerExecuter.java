@@ -44,9 +44,8 @@ public class ScannerExecuter {
 			microScannerDockerfileContent.append("FROM " + imageName + "\n");
 			microScannerDockerfileContent.append("ADD https://get.aquasec.com/microscanner .\n");
 			microScannerDockerfileContent.append("USER 0\n");
-			microScannerDockerfileContent.append("RUN chmod +x microscanner\n");
 			microScannerDockerfileContent.append("ARG token\n");
-			microScannerDockerfileContent.append("RUN ./microscanner ${token} ").append("json".equalsIgnoreCase(outputFormat) ? "" : "--html ");
+			microScannerDockerfileContent.append("RUN chmod +x microscanner && ./microscanner ${token} ").append("json".equalsIgnoreCase(outputFormat) ? "" : "--html ");
 			if (checkonly)
 			{
 				microScannerDockerfileContent.append("--continue-on-failure ");
