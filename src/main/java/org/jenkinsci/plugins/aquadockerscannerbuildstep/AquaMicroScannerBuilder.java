@@ -111,10 +111,10 @@ public class AquaMicroScannerBuilder extends Builder implements SimpleBuildStep{
 			throws AbortException, java.lang.InterruptedException {
 		// This is where you 'build' the project.
 
-		String microScannerToken = getDescriptor().getMicroScannerToken();
+		Secret microScannerToken = getDescriptor().getMicroScannerToken();
 		boolean caCertificates = getDescriptor().getCaCertificates();
 
-		if (microScannerToken == null || microScannerToken.trim().equals("")) {
+		if (microScannerToken == null || Secret.toString(microScannerToken).trim().equals("")) {
 				throw new AbortException("Missing configuration. Please set the global configuration parameters in The \"Aqua Security\" section under  \"Manage Jenkins/Configure System\", before continuing.\n");
 		}
 
@@ -231,8 +231,8 @@ public class AquaMicroScannerBuilder extends Builder implements SimpleBuildStep{
 			return super.configure(req, formData);
 		}
 
-		public String getMicroScannerToken() {
-			return Secret.toString(microScannerToken);
+		public Secret getMicroScannerToken() {
+			return microScannerToken;
 		}
 		public boolean getCaCertificates() {
 			return caCertificates;

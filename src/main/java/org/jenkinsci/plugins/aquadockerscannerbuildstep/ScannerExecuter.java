@@ -22,6 +22,7 @@ import java.util.UUID;
 import hudson.FilePath;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import hudson.util.Secret;
 
 /**
  * This class does the actual execution..
@@ -31,7 +32,7 @@ import hudson.model.TaskListener;
 public class ScannerExecuter {
 
 	public static int execute(Run<?, ?> build, FilePath workspace, Launcher launcher, TaskListener listener, String artifactName,
-			String microScannerToken, String imageName, String notCompliesCmd, String outputFormat, boolean checkonly, boolean caCertificates){
+			Secret microScannerToken, String imageName, String notCompliesCmd, String outputFormat, boolean checkonly, boolean caCertificates){
 
 		PrintStream print_stream = null;
 		try {
