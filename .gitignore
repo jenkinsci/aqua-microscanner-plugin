@@ -6,3 +6,4 @@
 target/
 Dockerfile
 aqua-microscanner.hpi
+aqua-microscanner.iml
